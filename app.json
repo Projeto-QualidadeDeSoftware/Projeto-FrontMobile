@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Prontê",
+    "slug": "pronte-mobile",
+    "version": "0.5.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FFF4E6"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {}
+  }
+}
