@@ -18,6 +18,14 @@ import { formatarMoeda } from '../utils/formatacao';
 import { avisar, confirmar } from '../utils/dialogos';
 import { aplicarMascaraCpf } from '../utils/mascaras';
 
+const CARGOS = ['Administrador', 'Gerente', 'Operador de Caixa', 'Supervisor', 'Estoquista', 'Repositor'];
+
+// Mantém na lista o cargo de um funcionário antigo cadastrado com outro nome.
+function opcoesDeCargo(atual: string): string[] {
+    const cargo = atual.trim();
+    return cargo !== '' && !CARGOS.includes(cargo) ? [...CARGOS, cargo] : CARGOS;
+}
+
 type ResultadoOperacao = {
     sucesso: boolean,
     mensagem: string
@@ -199,13 +207,22 @@ export default function Funcionarios({
                             />
 
                             <Text style={styles.label}>Cargo</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder='Ex.: Vendedor'
-                                placeholderTextColor={cores.placeholder}
-                                value={cargo}
-                                onChangeText={setCargo}
-                            />
+                            <View style={styles.opcoesCargo}>
+                                {opcoesDeCargo(cargo).map((opcao) => {
+                                    const selecionado = opcao === cargo;
+                                    return (
+                                        <Pressable
+                                            key={opcao}
+                                            onPress={() => setCargo(opcao)}
+                                            style={[styles.opcaoCargo, selecionado && styles.opcaoCargoSelecionada]}
+                                        >
+                                            <Text style={[styles.textoOpcaoCargo, selecionado && styles.textoOpcaoCargoSelecionada]}>
+                                                {opcao}
+                                            </Text>
+                                        </Pressable>
+                                    );
+                                })}
+                            </View>
 
                             <View style={styles.linhaCampos}>
                                 <View style={styles.campoMetade}>
@@ -338,6 +355,11 @@ const styles = StyleSheet.create({
     input: { width: '100%', minHeight: 45, borderWidth: 1, borderColor: cores.borda, backgroundColor: '#FFFBF6', borderRadius: 8, paddingHorizontal: 12, fontSize: 15, color: cores.texto },
     linhaCampos: { flexDirection: 'row', gap: 10 },
     campoMetade: { flex: 1 },
+    opcoesCargo: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+    opcaoCargo: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 18, borderWidth: 1, borderColor: cores.borda, backgroundColor: '#FFFBF6' },
+    opcaoCargoSelecionada: { backgroundColor: cores.laranja, borderColor: cores.laranja },
+    textoOpcaoCargo: { fontSize: 14, color: cores.texto },
+    textoOpcaoCargoSelecionada: { color: '#FFFFFF', fontWeight: 'bold' },
     ajudaSenha: { color: cores.textoSuave, fontSize: 12, lineHeight: 17, marginTop: 8 },
     erro: { color: cores.perigo, fontWeight: 'bold', marginTop: 10 },
     sucesso: { color: cores.verde, fontWeight: 'bold', marginTop: 10 },
