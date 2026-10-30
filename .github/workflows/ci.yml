@@ -1,0 +1,54 @@
+name: CI
+
+# Integração contínua do front mobile: em todo push e pull request para a main,
+# instala as dependências pelo package-lock, confere os tipos do TypeScript,
+# gera o pacote JavaScript do Android e a versão web do aplicativo.
+# Se o código não compilar, o PR não pode ser mesclado.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Tipos e build
+    runs-on: ubuntu-latest
+    env:
+      CI: 1
+      EXPO_OFFLINE: 1
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Conferir tipos (TypeScript)
+        run: npm run check
+
+      - name: Gerar o pacote do Android
+        run: npm run exportar:android
+
+      - name: Gerar a versão web
+        run: npm run exportar:web
+
+      - name: Publicar a versão web
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-web
+          path: dist
+          if-no-files-found: error

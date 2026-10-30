@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Prontê Mobile - versão 0.5
 
 Aplicativo mobile do sistema Prontê, desenvolvido com React Native, Expo e TypeScript. Esta versão foi atualizada para os endpoints da API Spring Boot recebida pela equipe.
@@ -120,36 +119,39 @@ Se a API estiver desligada, o login exibirá um erro de conexão e nenhuma infor
 - `App.tsx`: estados, regras principais e ligação entre as telas.
 
 Mais detalhes estão em `DOCUMENTACAO_VERSAO_05.md`.
-=======
-# Readme Template 📜
 
-Bem-vindo(a) ao **Readme Template**! Aqui você encontrará uma variedade de modelos de readme para usar em seus repositórios e perfil no GitHub. Explore nossa coleção de templates e encontre aquele que melhor se adequa ao seu projeto. Comece agora mesmo e deixe o seu readme brilhar!
+## Ambientes, CI e CD
 
-## Templates de perfil ☕️
+O aplicativo tem dois ambientes, cada um apontando para a sua API:
 
-Diga adeus aos perfis sem graça. Com nossos **[templates de perfil](https://github.com/iuricode/readme-template/tree/main/perfil)**, você terá um readme de perfil incrível. Com cores vibrantes, imagens surpreendentes e outros elementos visuais cativantes.
+| Ambiente | Aplicativo (versão web) | API |
+|---|---|---|
+| Homologação | https://mobile-hml.20-151-6-104.sslip.io | https://hml.20-151-6-104.sslip.io |
+| Produção | https://mobile.20-151-6-104.sslip.io | https://api.20-151-6-104.sslip.io |
 
-## Templates de repositório 🎉
+O endereço da API é definido na hora do build pela variável `EXPO_PUBLIC_API_URL`.
 
-Documente seus projetos com nossos exemplos de **[templates de repositório](https://github.com/iuricode/readme-template/tree/main/repositorio)** incríveis. Esses templates abrangem diversas seções essenciais, incluindo descrição, instalação, uso, contribuição e licença.
+**CI** (`.github/workflows/ci.yml`), em todo push e pull request para a `main`:
 
-## Status e badges shields 🦄
+1. instala as dependências pelo `package-lock.json` (`npm ci`);
+2. confere os tipos do TypeScript (`npm run check`);
+3. gera o pacote JavaScript do Android (`expo export --platform android`), garantindo que o código compila para o celular;
+4. gera a versão web (`expo export --platform web`) e a publica como artefato da execução.
 
-Aperfeiçoe o seu perfil e os seus repositórios adicionando **[cards de status](https://github.com/iuricode/readme-template/tree/main/cards-status/readme.md)** e **[badges shields](https://github.com/iuricode/readme-template/tree/main/badges-shields/readme.md)** ao seu readme. Esses cards proporcionam uma visão aprimorada e detalhada das informações relevantes, tornando o seu perfil e os seus projetos ainda mais impressionantes.
+Se qualquer etapa falhar, o PR não pode ser mesclado.
 
-## Formatações avançadas 🔥
+**CD** (`.github/workflows/cd.yml`), a cada alteração na `main`:
 
-Melhore seus readmes adicionando interações com as **[formatações avançadas.](https://github.com/iuricode/readme-template/tree/main/avancado/readme.md)**
+1. gera a versão web apontando para a API de homologação e publica em homologação, na VPS;
+2. espera a aprovação de um integrante do grupo (environment `producao` com *Required reviewers*);
+3. gera a versão web apontando para a API de produção e publica em produção.
 
-## Contribuição ✨
+Cada environment do GitHub (`homologacao` e `producao`) tem as variables `API_URL` e `APP_URL`. O acesso à VPS usa os secrets `VPS_HOST`, `VPS_USUARIO` e `VPS_CHAVE_SSH`, os mesmos do front web.
 
-Ajude a comunidade tornando este projeto ainda mais incrível. Leia como contribuir clicando **[aqui](https://github.com/iuricode/readme-template/blob/main/CONTRIBUTING.md)** e a **[licença](https://github.com/iuricode/readme-template/blob/main/LICENSE.md)**. Estou convencido de que juntos alcançaremos coisas incríveis!
+Para gerar a versão web localmente apontando para a homologação:
 
-## Disponível para freelas - #OpenToWork 🚀
+```bash
+EXPO_PUBLIC_API_URL=https://hml.20-151-6-104.sslip.io npm run exportar:web
+```
 
-Atualmente estou aberto para oportunidades como Desenvolvedor Frontend e UI/UX Designer. Se você precisa de alguém para transformar ideias em interfaces bonitas, responsivas e funcionais, podemos trabalhar juntos!
-
-📬 Entre em contato:
-📧 iuricold99@gmail.com
-💼 [Linkedin](https://www.linkedin.com/in/iuricode/)
->>>>>>> origin/main
+O APK não é gerado pelo pipeline; o mesmo código pode ser empacotado depois com o EAS Build.
