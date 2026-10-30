@@ -4,3 +4,4 @@ dist/
 dist-test*/
 .env
 npm-debug.log*
+dist-android/

@@ -3,15 +3,17 @@
   "version": "1.0.1",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "check": "tsc --noEmit",
-    "doctor": "npx expo-doctor",
-    "build:apk": "eas build -p android --profile apk-producao",
-    "build:apk:hml": "eas build -p android --profile apk-homologacao"
-  },
+  "start": "expo start",
+  "android": "expo start --android",
+  "ios": "expo start --ios",
+  "web": "expo start --web",
+  "check": "tsc --noEmit",
+  "doctor": "npx expo-doctor",
+  "exportar:web": "expo export --platform web --output-dir dist",
+  "exportar:android": "expo export --platform android --output-dir dist-android",
+  "build:apk": "eas build -p android --profile apk-producao",
+  "build:apk:hml": "eas build -p android --profile apk-homologacao"
+},
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
     "expo": "~57.0.31",
