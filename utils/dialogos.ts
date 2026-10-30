@@ -12,7 +12,8 @@ export function avisar(titulo: string, mensagem: string) {
 export function confirmar(
     titulo: string,
     mensagem: string,
-    onConfirmar: () => void | Promise<void>
+    onConfirmar: () => void | Promise<void>,
+    rotuloConfirmar = 'Excluir'
 ) {
     if (Platform.OS === 'web') {
         if (globalThis.confirm(`${titulo}\n\n${mensagem}`)) {
@@ -26,7 +27,7 @@ export function confirmar(
         mensagem,
         [
             { text: 'Cancelar', style: 'cancel' },
-            { text: 'Excluir', style: 'destructive', onPress: onConfirmar },
+            { text: rotuloConfirmar, style: 'destructive', onPress: onConfirmar },
         ]
     );
 }

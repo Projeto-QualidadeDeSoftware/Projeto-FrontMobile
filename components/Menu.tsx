@@ -1,9 +1,10 @@
 import { ComponentProps } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cores } from '../theme/tema';
 
-export type Tela = 'inicio' | 'vendas' | 'produtos' | 'mais' | 'clientes' | 'funcionarios';
+export type Tela = 'inicio' | 'vendas' | 'produtos' | 'mais' | 'configuracoes' | 'privacidade' | 'clientes' | 'funcionarios';
 
 type MenuProps = {
     telaAtual: Tela,
@@ -13,7 +14,7 @@ type MenuProps = {
 type NomeIcone = ComponentProps<typeof Ionicons>['name'];
 
 const opcoes: {
-    tela: 'inicio' | 'vendas' | 'produtos' | 'mais',
+    tela: 'inicio' | 'vendas' | 'produtos' | 'mais' | 'configuracoes',
     titulo: string,
     icone: NomeIcone,
     iconeSelecionado: NomeIcone
@@ -22,16 +23,26 @@ const opcoes: {
     { tela: 'vendas', titulo: 'Vendas', icone: 'cart-outline', iconeSelecionado: 'cart' },
     { tela: 'produtos', titulo: 'Produtos', icone: 'cube-outline', iconeSelecionado: 'cube' },
     { tela: 'mais', titulo: 'Mais', icone: 'grid-outline', iconeSelecionado: 'grid' },
+    { tela: 'configuracoes', titulo: 'Ajustes', icone: 'settings-outline', iconeSelecionado: 'settings' },
 ];
 
 export default function Menu({ telaAtual, onMudarTela }: MenuProps) {
+    const areaSegura = useSafeAreaInsets();
+
     return (
-        <View style={styles.menu}>
+        <View
+            style={[
+                styles.menu,
+                { paddingBottom: Math.max(12, areaSegura.bottom) },
+            ]}
+        >
             {
                 opcoes.map((opcao) => {
                     const selecionada = telaAtual === opcao.tela || (
                         opcao.tela === 'mais' &&
                         (telaAtual === 'clientes' || telaAtual === 'funcionarios')
+                    ) || (
+                        opcao.tela === 'configuracoes' && telaAtual === 'privacidade'
                     );
 
                     return (
@@ -84,11 +95,11 @@ const styles = StyleSheet.create({
     },
 
     opcao: {
-        minWidth: 72,
+        flex: 1,
         minHeight: 62,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: 8,
+        paddingHorizontal: 2,
     },
 
     marcador: {
@@ -109,7 +120,7 @@ const styles = StyleSheet.create({
 
     texto: {
         color: '#D5DBE8',
-        fontSize: 13,
+        fontSize: 12,
         fontWeight: '600',
     },
 

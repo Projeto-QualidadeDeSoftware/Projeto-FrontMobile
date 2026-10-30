@@ -1,23 +1,30 @@
 {
   "name": "pronte-mobile",
-  "version": "0.5.0",
+  "version": "1.0.1",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "check": "tsc --noEmit",
-    "exportar:web": "expo export --platform web --output-dir dist",
-    "exportar:android": "expo export --platform android --output-dir dist-android"
-  },
+  "start": "expo start",
+  "android": "expo start --android",
+  "ios": "expo start --ios",
+  "web": "expo start --web",
+  "check": "tsc --noEmit",
+  "doctor": "npx expo-doctor",
+  "exportar:web": "expo export --platform web --output-dir dist",
+  "exportar:android": "expo export --platform android --output-dir dist-android",
+  "build:apk": "eas build -p android --profile apk-producao",
+  "build:apk:hml": "eas build -p android --profile apk-homologacao"
+},
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
-    "expo": "^57.0.23",
+    "expo": "~57.0.31",
+    "expo-constants": "~57.0.22",
+    "expo-font": "~57.0.4",
+    "expo-splash-screen": "~57.0.10",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-safe-area-context": "~5.7.0",
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {

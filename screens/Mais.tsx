@@ -19,8 +19,7 @@ type MaisProps = {
     usuario: UsuarioLogado,
     onAbrirClientes: () => void,
     onAbrirFuncionarios: () => void,
-    onPerguntar: (pergunta: string) => Promise<ResultadoOperacao>,
-    onSair: () => void
+    onPerguntar: (pergunta: string) => Promise<ResultadoOperacao>
 }
 
 export default function Mais({
@@ -29,8 +28,7 @@ export default function Mais({
     usuario,
     onAbrirClientes,
     onAbrirFuncionarios,
-    onPerguntar,
-    onSair
+    onPerguntar
 }: MaisProps) {
 
     const[pergunta, setPergunta] = useState('');
@@ -68,10 +66,6 @@ export default function Mais({
                         <Text style={styles.nomeUsuario}>{usuario.nome}</Text>
                         <Text style={styles.cargoUsuario}>{usuario.cargo}</Text>
                     </View>
-                </View>
-
-                <View style={styles.areaSair}>
-                    <Botao titulo='Sair' onPress={onSair} variante='secundario' />
                 </View>
             </View>
 
@@ -228,11 +222,6 @@ const styles = StyleSheet.create({
         color: '#D5DBE8',
         fontSize: 13,
         marginTop: 2,
-    },
-
-    areaSair: {
-        minWidth: 82,
-        marginLeft: 12,
     },
 
     tituloSecao: {

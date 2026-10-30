@@ -1,157 +1,298 @@
-# Prontê Mobile - versão 0.5
+# Prontê Mobile
 
-Aplicativo mobile do sistema Prontê, desenvolvido com React Native, Expo e TypeScript. Esta versão foi atualizada para os endpoints da API Spring Boot recebida pela equipe.
+Aplicativo mobile do **Prontê**, um sistema de gerenciamento de vendas integrado a uma API REST desenvolvida com Spring Boot.
 
-## O que já funciona
+O projeto foi construído com React Native, Expo e TypeScript. Ele pode ser executado em celulares Android e iOS e também no navegador durante o desenvolvimento.
 
-- Login por CPF e senha;
-- Autenticação das requisições com token JWT;
-- Consulta de produtos, clientes, funcionários e vendas;
-- Venda com quantidade por produto;
-- Cálculo do total e baixa de estoque pela API;
-- Histórico com cliente, vendedor e itens da venda;
-- Cadastro, edição e exclusão de produtos;
+## Funcionalidades
+
+- Login com CPF e senha;
+- Autenticação com token JWT;
 - Cadastro, edição e exclusão de clientes;
 - Cadastro, edição e exclusão de funcionários;
+- Cadastro, edição e exclusão de produtos;
+- Registro de vendas com vários produtos e quantidades;
+- Seleção pesquisável de clientes e funcionários;
+- Histórico de vendas;
+- Atualização de estoque realizada pela API;
+- Máscaras automáticas para CPF e telefone;
+- Ícones de produtos definidos pelo nome e pela descrição;
 - Assistente de IA para perguntas sobre o estoque;
-- Mensagens de validação e erro devolvidas pela API;
-- Ícones na navegação, resumos e categorias de produtos;
-- Placeholders mais claros e visualmente diferentes dos valores digitados;
-- Seletores pesquisáveis de clientes e funcionários na venda;
-- Máscaras automáticas de CPF e telefone;
-- Ícones automáticos de produtos, definidos pelo nome e pela descrição;
-- Exemplos das palavras reconhecidas diretamente no formulário de produto;
-- Tratamento de funcionários sem salário informado.
+- Modo demonstração com dados locais para testar sem servidor;
+- Identidade visual oficial nas telas de login, início e abertura;
+- Tela de configurações com atualização dos dados e controle da sessão;
+- Tela de informações sobre privacidade e tratamento de dados;
+- Configuração pronta para gerar APKs de produção e homologação.
 
-## Como executar
+## Tecnologias
+
+- React Native;
+- Expo;
+- TypeScript;
+- React Native Web;
+- Expo Vector Icons;
+- API REST com Spring Boot;
+- Autenticação JWT.
+
+## Ambientes da API
+
+O aplicativo usa automaticamente a API de produção, sem exigir um arquivo `.env`:
+
+```text
+https://api.20-151-6-104.sslip.io
+```
+
+Também é possível trocar o ambiente sem alterar o código:
+
+| Ambiente | Endereço |
+| --- | --- |
+| Produção (padrão) | `https://api.20-151-6-104.sslip.io` |
+| Homologação | `https://hml.20-151-6-104.sslip.io` |
+| API local | `http://localhost:8080` |
+
+Para usar homologação ou uma API local, copie `.env.example`, renomeie a cópia para `.env` e deixe o endereço desejado em `EXPO_PUBLIC_API_URL`. Depois, reinicie o Expo com `npx expo start -c`.
+
+O servidor publicado pode ser desligado pela equipe quando não estiver sendo utilizado. Nesse caso, o aplicativo continuará abrindo normalmente, mas o login dependerá de o servidor ser ligado novamente.
+
+### Compartilhamento dos dados
+
+Na estrutura atual, todos os funcionários autenticados na mesma API utilizam o mesmo banco de dados. Produtos, clientes, funcionários e vendas não são separados por conta ou por empresa.
+
+Para atender várias lojas com dados independentes, a API precisará implementar uma separação por empresa, loja ou organização e vincular cada funcionário a uma delas.
+
+## Testar sem servidor
+
+O modo demonstração permite navegar por todas as telas sem iniciar a API, o MySQL ou o servidor publicado. Ele inclui produtos, clientes, funcionários e vendas de exemplo. Também permite fazer cadastros, edições, exclusões e novas vendas localmente.
+
+No PowerShell, dentro da pasta do projeto, execute:
+
+```powershell
+Copy-Item .env.demo.example .env
+npx expo start -c
+```
+
+No Prompt de Comando, use:
+
+```bat
+copy .env.demo.example .env
+npx expo start -c
+```
+
+Na tela de login, selecione **Entrar sem servidor**. Não é necessário preencher CPF ou senha.
+
+Os dados da demonstração ficam somente na memória e voltam ao estado inicial quando a página ou o aplicativo é completamente recarregado. Para retornar à API real, exclua o arquivo `.env` e reinicie o Expo:
+
+```powershell
+Remove-Item .env
+npx expo start -c
+```
+
+O modo demonstração é desativado por padrão e não deve ser habilitado na versão enviada à Play Store.
+
+## Antes de começar
+
+Para executar somente o aplicativo com a API publicada, são necessários:
+
+| Programa | Para que serve |
+| --- | --- |
+| [Node.js LTS](https://nodejs.org/) | Executar o projeto React Native/Expo |
+| [Git](https://git-scm.com/downloads) | Clonar o repositório, se necessário |
+| [Expo Go](https://expo.dev/go) | Testar o aplicativo em um celular físico |
+
+JDK 17 e MySQL são necessários apenas para executar uma cópia local da API. O roteiro completo dos dois modos está em [`GUIA_CONFIGURACAO_DO_ZERO.md`](GUIA_CONFIGURACAO_DO_ZERO.md).
+
+## 1. Conferir o Node.js
+
+Abra o PowerShell ou o Prompt de Comando e execute:
+
+```powershell
+node -v
+npm -v
+```
+
+Se o PowerShell bloquear `npm.ps1`, use `npm.cmd` nos comandos ou abra um terminal do tipo **Command Prompt** no VS Code.
+
+## 2. Instalar o aplicativo
+
+Abra um terminal na pasta do Prontê Mobile:
+
+```powershell
+cd C:\caminho\para\Pronte-Mobile-v1.0.1
+```
 
 Instale as dependências:
 
-```bash
+```powershell
 npm install
 ```
 
-Primeiro, deixe a API Spring Boot executando na porta `8080`. Depois, inicie o Expo:
+## 3. Executar no navegador
 
-```bash
+Execute no terminal do aplicativo:
+
+```powershell
 npm run web
 ```
 
-O navegador abrirá o aplicativo na tela de login. No teste web, o endereço padrão da API é:
+O Expo abrirá o aplicativo no navegador. O endereço padrão da API é:
 
 ```text
-http://localhost:8080
+https://api.20-151-6-104.sslip.io
 ```
 
-## Como conectar à API
+O navegador aplica regras de CORS. Se a API publicada não autorizar o endereço local do Expo, use o aplicativo no Expo Go ou peça à equipe da API para liberar a origem exibida pelo navegador.
 
-Para testar em um celular físico, copie `.env.example` para `.env` e informe o IP do computador que está executando o Spring Boot:
+## 4. Executar em um celular físico
 
-```env
-EXPO_PUBLIC_API_URL=http://192.168.0.10:8080
+Inicie o Expo:
+
+```powershell
+npm start
 ```
 
-No celular físico, o computador e o celular devem estar na mesma rede. Não use `localhost`, porque ele apontaria para o próprio celular.
+Abra o Expo Go no celular e leia o QR Code mostrado no terminal ou no navegador. Se o Windows solicitar autorização de rede para o Node.js ou Java, permita o acesso em redes privadas.
 
-No Android Emulator, normalmente pode ser usado:
+Com a API publicada, o celular acessa o servidor HTTPS diretamente e não precisa usar o IPv4 do computador. A mesma rede Wi-Fi e o endereço `http://192.168...:8080` só são necessários ao testar uma API local.
+
+Depois de alterar um `.env`, reinicie o Expo limpando o cache:
+
+```powershell
+npx expo start -c
+```
+
+## 5. Executar no Android Emulator
+
+Com a API publicada, basta executar:
+
+```powershell
+npm run android
+```
+
+O endereço abaixo só deve ser usado no `.env` quando a API estiver rodando localmente no computador:
 
 ```env
 EXPO_PUBLIC_API_URL=http://10.0.2.2:8080
 ```
 
-Depois de alterar o `.env`, pare e inicie o Expo novamente. A tela de login é sempre a primeira tela do aplicativo. Em desenvolvimento, a API cria o usuário inicial abaixo quando o banco está vazio:
+## 6. Testar a integração
+
+Com a API e o aplicativo funcionando:
+
+1. Faça login;
+2. Cadastre um cliente;
+3. Cadastre um funcionário;
+4. Cadastre um produto com estoque maior que zero;
+5. Registre uma venda;
+6. Confira se o estoque do produto diminuiu;
+7. Atualize as listas e confirme que os dados continuam disponíveis.
+
+Se o aplicativo abrir a tela de login e carregar os cadastros depois da autenticação, a comunicação com a API está funcionando.
+
+## Endpoints utilizados
+
+| Função | Endpoint |
+| --- | --- |
+| Login | `POST /auth/login` |
+| Usuário logado | `GET /auth/me` |
+| Clientes | `/cliente` |
+| Funcionários | `/funcionario` |
+| Produtos | `/produto` |
+| Vendas | `/venda` |
+| Assistente de estoque | `POST /assistente/pergunta` |
+| Estado da API | `GET /actuator/health` |
+
+Todas as rotas, exceto o login e o estado da API, exigem o token JWT recebido na autenticação. O aplicativo envia esse token automaticamente.
+
+## Ícones dos produtos
+
+A API não precisa armazenar um campo de ícone. O próprio aplicativo escolhe o ícone utilizando palavras presentes no nome ou na descrição do produto.
+
+| Categoria visual | Exemplos reconhecidos |
+| --- | --- |
+| Café | café, cappuccino |
+| Bebida | água, suco, refrigerante, chá |
+| Gelado | sorvete, picolé |
+| Doce | chocolate, doce, bala |
+| Lanche | coxinha, salgado, pão, esfirra, hambúrguer, lanche |
+| Pizza | pizza |
+| Natural | salada, fruta, natural |
+| Padrão | qualquer outro produto |
+
+## Comandos do projeto
+
+| Comando | Ação |
+| --- | --- |
+| `npm start` | Inicia o Expo |
+| `npm run web` | Abre no navegador |
+| `npm run android` | Abre no Android |
+| `npm run ios` | Abre no iOS, quando disponível |
+| `npm run check` | Verifica os tipos TypeScript |
+| `npm run doctor` | Verifica a compatibilidade do projeto Expo |
+| `npm run build:apk` | Gera o APK conectado à produção pelo EAS |
+| `npm run build:apk:hml` | Gera o APK conectado à homologação pelo EAS |
+
+## Gerar um APK instalável
+
+A versão 1.0.1 já possui nome, identificador Android, ícones, tela de abertura e perfis de compilação configurados.
+
+O APK final é compilado e assinado pelo EAS. O passo a passo inclui a criação da conta Expo, os comandos, as respostas às perguntas da primeira compilação, o download e a instalação no celular:
+
+[`GUIA_GERAR_APK.md`](GUIA_GERAR_APK.md)
+
+Para gerar uma nova versão usando a mesma assinatura e atualizar o APK já instalado:
+
+[`GUIA_ATUALIZAR_APK.md`](GUIA_ATUALIZAR_APK.md)
+
+Para a entrega final, utilize o perfil `apk-producao`. Ele aponta para a API publicada e mantém o modo demonstração desativado.
+
+## Problemas comuns
+
+### `No compiler is provided in this environment`
+
+O computador está usando um JRE ou o `JAVA_HOME` está incorreto. Instale o JDK 17 e confira:
+
+```powershell
+where.exe java
+where.exe javac
+java -version
+javac -version
+```
+
+### Erro de conexão com o MySQL
+
+Confirme se o serviço do MySQL está iniciado, se o banco `projeto` existe e se usuário e senha estão corretos no `application.properties`.
+
+### `Network request failed`
+
+- Confirme com a equipe se o servidor publicado está ligado;
+- Abra `https://api.20-151-6-104.sslip.io/actuator/health` no navegador;
+- Confira se o `.env` não está substituindo o endereço padrão por um endereço antigo;
+- Depois de mudar o `.env`, reinicie com `npx expo start -c`;
+- Para API local no celular físico, não use `localhost`: use o IPv4 do computador e a mesma rede Wi-Fi.
+
+### Resposta `401`
+
+O login está incorreto ou o token expirou. Entre novamente. Se o banco já possuía funcionários, o administrador padrão pode não ter sido criado.
+
+### Assistente responde `503`
+
+O restante do sistema continua funcionando. Esse endpoint depende da variável `MISTRAL_API_KEY` configurada na API.
+
+## Estrutura principal
 
 ```text
-CPF: 00000000000
-Senha: admin123
+components/  Componentes reutilizáveis
+assets/      Logotipo e recursos visuais
+models/      Tipos utilizados pelo aplicativo
+screens/     Telas do sistema
+services/    Comunicação com a API
+theme/       Cores e padrões visuais
+utils/       Máscaras, ícones e formatações
+App.tsx      Navegação, estados e regras principais
 ```
 
-## Formato enviado ao registrar uma venda
+As alterações da integração com o servidor estão em [`DOCUMENTACAO_VERSAO_06.md`](DOCUMENTACAO_VERSAO_06.md), o modo demonstração em [`DOCUMENTACAO_VERSAO_07.md`](DOCUMENTACAO_VERSAO_07.md), a identidade visual e os ajustes para celulares em [`DOCUMENTACAO_VERSAO_08.md`](DOCUMENTACAO_VERSAO_08.md), a preparação da entrega instalável em [`DOCUMENTACAO_VERSAO_10.md`](DOCUMENTACAO_VERSAO_10.md) e a correção da abertura do aplicativo em [`DOCUMENTACAO_VERSAO_101.md`](DOCUMENTACAO_VERSAO_101.md).
 
-```json
-{
-  "dataVenda": "2026-10-16",
-  "clienteId": 1,
-  "funcionarioId": 1,
-  "itens": [
-    { "produtoId": 1, "quantidade": 2 },
-    { "produtoId": 2, "quantidade": 1 }
-  ]
-}
-```
+## Responsável pelo front-end mobile
 
-A API calcula o valor total, verifica o estoque e devolve a venda pronta. Se a quantidade for maior que o estoque disponível, o aplicativo mostra a mensagem da resposta `409`.
-
-## Endpoints preparados no serviço
-
-O arquivo `services/api.ts` possui funções para:
-
-- `POST /auth/login` e `GET /auth/me`;
-- CRUD de `/cliente` e consulta de `/cliente/{id}/vendas`;
-- CRUD de `/funcionario` e consulta de `/funcionario/{id}/vendas`;
-- CRUD de `/produto`;
-- CRUD de `/venda`;
-- `POST /assistente/pergunta`.
-
-Nesta versão, a interface utiliza login, frente de caixa, histórico, assistente e o CRUD de produtos, clientes e funcionários.
-
-O aplicativo não envia nenhum campo de ícone para a API. A escolha visual acontece apenas no mobile, usando palavras do nome e da descrição, portanto a API original continua compatível sem alterações.
-
-## Como confirmar que a integração está funcionando
-
-1. Abra a API e confirme que `http://localhost:8080/actuator/health` responde;
-2. Execute `npm run web` no projeto mobile;
-3. Entre com o CPF e a senha do usuário inicial;
-4. Cadastre um produto, cliente ou funcionário pelo aplicativo;
-5. Consulte o endpoint correspondente no Insomnia ou o banco para confirmar o cadastro;
-6. Faça uma venda e confirme que o estoque foi reduzido na API.
-
-Se a API estiver desligada, o login exibirá um erro de conexão e nenhuma informação local será carregada.
-
-## Organização do código
-
-- `components`: elementos reutilizáveis da interface;
-- `models`: tipos que seguem as respostas da API;
-- `screens`: telas principais;
-- `services`: autenticação e comunicação HTTP;
-- `theme`: cores e padrões visuais;
-- `utils`: funções de formatação;
-- `App.tsx`: estados, regras principais e ligação entre as telas.
-
-Mais detalhes estão em `DOCUMENTACAO_VERSAO_05.md`.
-
-## Ambientes, CI e CD
-
-O aplicativo tem dois ambientes, cada um apontando para a sua API:
-
-| Ambiente | Aplicativo (versão web) | API |
-|---|---|---|
-| Homologação | https://mobile-hml.20-151-6-104.sslip.io | https://hml.20-151-6-104.sslip.io |
-| Produção | https://mobile.20-151-6-104.sslip.io | https://api.20-151-6-104.sslip.io |
-
-O endereço da API é definido na hora do build pela variável `EXPO_PUBLIC_API_URL`.
-
-**CI** (`.github/workflows/ci.yml`), em todo push e pull request para a `main`:
-
-1. instala as dependências pelo `package-lock.json` (`npm ci`);
-2. confere os tipos do TypeScript (`npm run check`);
-3. gera o pacote JavaScript do Android (`expo export --platform android`), garantindo que o código compila para o celular;
-4. gera a versão web (`expo export --platform web`) e a publica como artefato da execução.
-
-Se qualquer etapa falhar, o PR não pode ser mesclado.
-
-**CD** (`.github/workflows/cd.yml`), a cada alteração na `main`:
-
-1. gera a versão web apontando para a API de homologação e publica em homologação, na VPS;
-2. espera a aprovação de um integrante do grupo (environment `producao` com *Required reviewers*);
-3. gera a versão web apontando para a API de produção e publica em produção.
-
-Cada environment do GitHub (`homologacao` e `producao`) tem as variables `API_URL` e `APP_URL`. O acesso à VPS usa os secrets `VPS_HOST`, `VPS_USUARIO` e `VPS_CHAVE_SSH`, os mesmos do front web.
-
-Para gerar a versão web localmente apontando para a homologação:
-
-```bash
-EXPO_PUBLIC_API_URL=https://hml.20-151-6-104.sslip.io npm run exportar:web
-```
-
-O APK não é gerado pelo pipeline; o mesmo código pode ser empacotado depois com o EAS Build.
+**Diego** — desenvolvimento da interface mobile, integração com a API e adaptação do Design System do Prontê.
