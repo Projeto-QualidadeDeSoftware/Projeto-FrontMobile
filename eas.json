@@ -1,0 +1,27 @@
+{
+  "cli": {
+    "appVersionSource": "local"
+  },
+  "build": {
+    "apk-producao": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://api.20-151-6-104.sslip.io",
+        "EXPO_PUBLIC_MODO_DEMO": "false"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "apk-homologacao": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://hml.20-151-6-104.sslip.io",
+        "EXPO_PUBLIC_MODO_DEMO": "false"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}

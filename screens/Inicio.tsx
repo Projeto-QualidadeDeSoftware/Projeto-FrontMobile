@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Botao from '../components/Botao';
 import CardResumo from '../components/CardResumo';
 import { cores } from '../theme/tema';
@@ -16,10 +16,17 @@ export default function Inicio({
     quantidadeVendas,
     onAbrirVendas
 }: InicioProps) {
+    const { width: larguraTela } = useWindowDimensions();
+    const larguraLogo = Math.min(238, Math.max(1, larguraTela - 40));
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.marca}>PRONTÊ</Text>
+            <Image
+                source={require('../assets/pronte-logo-horizontal.png')}
+                style={{ width: larguraLogo, height: larguraLogo / 3 }}
+                resizeMode='contain'
+                accessibilityLabel='Prontê Conveniência'
+            />
             <Text style={styles.subtitulo}>Gestão rápida para sua loja</Text>
 
             <Text style={styles.tituloSecao}>Resumo</Text>
@@ -50,16 +57,10 @@ const styles = StyleSheet.create({
         paddingBottom: 30,
     },
 
-    marca: {
-        color: cores.azul,
-        fontSize: 32,
-        fontWeight: 'bold',
-    },
-
     subtitulo: {
         color: cores.textoSuave,
         fontSize: 16,
-        marginTop: 3,
+        marginTop: 5,
     },
 
     tituloSecao: {

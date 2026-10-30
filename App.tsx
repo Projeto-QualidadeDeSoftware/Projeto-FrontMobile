@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Menu, { Tela } from './components/Menu';
 import { UsuarioLogado } from './models/Autenticacao';
 import { Cliente } from './models/Cliente';
@@ -14,6 +15,8 @@ import Clientes from './screens/Clientes';
 import Funcionarios from './screens/Funcionarios';
 import Produtos from './screens/Produtos';
 import Vendas from './screens/Vendas';
+import Configuracoes from './screens/Configuracoes';
+import Privacidade from './screens/Privacidade';
 import {
     ErroApi,
     DadosFuncionario,
@@ -32,7 +35,9 @@ import {
     excluirCliente as excluirClienteApi,
     excluirFuncionario as excluirFuncionarioApi,
     excluirProduto as excluirProdutoApi,
+    MODO_DEMO,
     perguntarAoAssistente,
+    reiniciarDemonstracao,
     registrarVenda,
 } from './services/api';
 import { cores } from './theme/tema';
@@ -43,6 +48,14 @@ type ResultadoOperacao = {
 }
 
 export default function App() {
+    return (
+        <SafeAreaProvider>
+            <Aplicativo />
+        </SafeAreaProvider>
+    );
+}
+
+function Aplicativo() {
     // Os dados ficam aqui porque são usados por mais de uma tela.
     const[telaAtual, setTelaAtual] = useState<Tela>('inicio');
     const[produtos, setProdutos] = useState<Produto[]>([]);
@@ -54,7 +67,7 @@ export default function App() {
     const[funcionarioSelecionado, setFuncionarioSelecionado] = useState<number | null>(null);
     const[usuario, setUsuario] = useState<UsuarioLogado | null>(null);
 
-    async function carregarDadosDaApi(funcionarioLogadoId: number) {
+    async function carregarDados(funcionarioLogadoId: number) {
         const[
             produtosRecebidos,
             clientesRecebidos,
@@ -83,7 +96,7 @@ export default function App() {
         try {
             const login = await entrarApi(cpf, senha);
             definirToken(login.token);
-            await carregarDadosDaApi(login.funcionario.id);
+            await carregarDados(login.funcionario.id);
             setUsuario(login.funcionario);
 
             return { sucesso: true, mensagem: 'Login realizado.' };
@@ -91,7 +104,7 @@ export default function App() {
             definirToken(null);
             return {
                 sucesso: false,
-                mensagem: mensagemDoErro(erro, 'Não foi possível entrar na API.'),
+                mensagem: mensagemDoErro(erro, 'Não foi possível entrar.'),
             };
         }
     }
@@ -107,6 +120,42 @@ export default function App() {
         setFuncionarioSelecionado(null);
         setTelaAtual('inicio');
         setQuantidades({});
+    }
+
+    async function atualizarDados(): Promise<ResultadoOperacao> {
+        if (!usuario) {
+            return { sucesso: false, mensagem: 'A sessão não está disponível.' };
+        }
+
+        try {
+            await carregarDados(usuario.id);
+            setQuantidades({});
+            return { sucesso: true, mensagem: 'Os dados foram atualizados.' };
+        } catch (erro) {
+            encerrarSeTokenExpirou(erro);
+            return {
+                sucesso: false,
+                mensagem: mensagemDoErro(erro, 'Não foi possível atualizar os dados.'),
+            };
+        }
+    }
+
+    async function reiniciarDadosDemo(): Promise<ResultadoOperacao> {
+        if (!MODO_DEMO || !usuario) {
+            return { sucesso: false, mensagem: 'A demonstração não está ativa.' };
+        }
+
+        try {
+            await reiniciarDemonstracao();
+            await carregarDados(usuario.id);
+            setQuantidades({});
+            return { sucesso: true, mensagem: 'A demonstração voltou ao estado inicial.' };
+        } catch (erro) {
+            return {
+                sucesso: false,
+                mensagem: mensagemDoErro(erro, 'Não foi possível reiniciar a demonstração.'),
+            };
+        }
     }
 
     function alterarQuantidade(id: number, novaQuantidade: number) {
@@ -420,6 +469,10 @@ export default function App() {
             return 'Não foi possível conectar ao servidor. Confira se a API está ligada.';
         }
 
+        if (erro instanceof Error && erro.message.trim() !== '') {
+            return erro.message;
+        }
+
         return mensagemPadrao;
     }
 
@@ -427,7 +480,7 @@ export default function App() {
         return (
             <View style={styles.container}>
                 <StatusBar style='dark' />
-                <Login onEntrar={entrar} />
+                <Login onEntrar={entrar} modoDemo={MODO_DEMO} />
             </View>
         );
     }
@@ -486,8 +539,26 @@ export default function App() {
                             onAbrirClientes={() => setTelaAtual('clientes')}
                             onAbrirFuncionarios={() => setTelaAtual('funcionarios')}
                             onPerguntar={perguntar}
+                        />
+                    )
+                }
+
+                {
+                    telaAtual === 'configuracoes' && (
+                        <Configuracoes
+                            usuario={usuario}
+                            modoDemo={MODO_DEMO}
+                            onAtualizarDados={atualizarDados}
+                            onReiniciarDemonstracao={reiniciarDadosDemo}
+                            onAbrirPrivacidade={() => setTelaAtual('privacidade')}
                             onSair={sair}
                         />
+                    )
+                }
+
+                {
+                    telaAtual === 'privacidade' && (
+                        <Privacidade onVoltar={() => setTelaAtual('configuracoes')} />
                     )
                 }
 
